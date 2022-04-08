@@ -12,7 +12,7 @@ kp_name=joseaws
 instance_size='t2.nano'
 instance_image=ami-'059cd2be9c27a0e81'
 # instance_image=ami-a4827dc9
-vpc_prefix='192.168.0.0/16'
+vpc_prefix='z.0.0/16'
 subnet1_prefix='192.168.1.0/24'
 subnet2_prefix='192.168.2.0/24'
 
@@ -168,7 +168,7 @@ function delete_all_instances() {
     while read -r instance_id
     do
         echo "Terminating instance ${instance_id}..."
-        aws ec2 terminate-instances --instance-ids "${instance_id}" >/dev/null
+        aws ec2 terminate-instances --instance-ids "${instance_id}"
     done < <(echo "$instance_list")
 }
 
