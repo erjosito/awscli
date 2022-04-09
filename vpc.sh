@@ -152,19 +152,16 @@ function delete_vpc() {
 }
 
 function delete_all_sgs() {
-    sg_list_string=$(aws ec2 describe-security-groups --query 'SecurityGroups[*].GroupId' --output text)
-    i=1
-    sg_id=$(echo "$sg_list_string" | cut -f $i)
-    while [[ -n $sg_id ]]; do
-        echo "Deleting SG number $i: $sg_id..."
+    sg_list=$(aws ec2 describe-security-groups --query 'SecurityGroups[*].[GroupId]' --output text)
+    while read -r sg_id
+    do
+        echo "Deleting SG ${sg_id}..."
         aws ec2 delete-security-group --group-id "$sg_id"
-        i=$(( i + 1 ))
-        sg_id=$(echo "$sg_list_string" | cut -f $i)
-    done
+    done < <(echo "$sg_list")
 }
 
 function delete_all_instances() {
-    instance_list=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --output text)
+    instance_list=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId]' --output text)
     while read -r instance_id
     do
         echo "Terminating instance ${instance_id}..."
